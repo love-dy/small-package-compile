@@ -30,6 +30,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
     
     name: Build ${{matrix.target}}
     strategy:
@@ -39,13 +41,13 @@ jobs:
         
     steps:
     - name: Checkout
-      uses: actions/checkout@main
+      uses: actions/checkout@v3
 
     - name: cancel running workflows
       uses: styfle/cancel-workflow-action@main
       if: contains(github.event.action, 'cw')
       with:
-        workflow_id: 113014261
+        workflow_id: all
         access_token: ${{ github.token }}
 
     - name: Load Settings.ini
@@ -85,7 +87,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo -E apt-get -qq update
-        ( sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake \ 
+        sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake \ 
         cpio curl device-tree-compiler dos2unix ecj fakeroot fastjar flex g++-multilib gawk gcc-multilib gettext git gnutls-dev gperf \ 
         haveged help2man intltool jq lib32gcc-s1 libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev \ 
         libncurses5-dev libncursesw5 libncursesw5-dev libpython3-dev libreadline-dev libssl-dev libtool libyaml-dev libz-dev lrzsz mkisofs \ 
@@ -95,7 +97,7 @@ jobs:
         sudo -E apt-get -qq purge azure-cli ghc* zulu* hhvm llvm* firefox powershell openjdk* dotnet* google* mysql* php* android*
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq autoremove --purge
-        sudo -E apt-get -qq clean ) &                
+        sudo -E apt-get -qq clean               
         sudo timedatectl set-timezone "$TZ"
 
     - name: Get current date
@@ -109,9 +111,9 @@ jobs:
       run: |
         REPO_BRANCH="$(curl -s https://api.github.com/repos/openwrt/openwrt/tags | jq -r '.[].name' | grep v22 | head -n 1 | sed -e 's/v//')"
         if [[ ${{matrix.target}} == "x86_64" ]]; then
-            curl -fL -m 60 -o sdk.tar.xz https://downloads.openwrt.org/releases/$REPO_BRANCH/targets/x86/64/openwrt-sdk-$REPO_BRANCH-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz || curl -fL -m 60 -o sdk.tar.xz https://openwrt.tetaneutral.net/releases/22.03-SNAPSHOT/targets/x86/64/openwrt-sdk-22.03-SNAPSHOT-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+            curl -fL -m 60 -o sdk.tar.xz https://downloads.openwrt.org/releases/$REPO_BRANCH/targets/x86/64/openwrt-sdk-$REPO_BRANCH-x86-64_gcc-7.3.0_musl.Linux-x86_64.tar.xz
         elif [[ ${{matrix.target}} == "nanopi-r4s" ]]; then
-            curl -fL -m 60 -o sdk.tar.xz https://downloads.openwrt.org/releases/$REPO_BRANCH/targets/rockchip/armv8/openwrt-sdk-$REPO_BRANCH-rockchip-armv8_gcc-11.2.0_musl.Linux-x86_64.tar.xz || curl -fL -m 60 -o sdk.tar.xz https://openwrt.tetaneutral.net/releases/20.02-SNAPSHOT/targets/rockchip/armv8/openwrt-sdk-22.03-SNAPSHOT-rockchip-armv8_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+            curl -fL -m 60 -o sdk.tar.xz https://downloads.openwrt.org/releases/$REPO_BRANCH/targets/rockchip/armv8/openwrt-sdk-$REPO_BRANCH-rockchip-armv8_gcc-7.3.0_musl.Linux-x86_64.tar.xz
         fi
 
     - name: Free up disk space
