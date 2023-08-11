@@ -105,9 +105,9 @@ jobs:
       run: |
         REPO_BRANCH="$(curl -s https://api.github.com/repos/openwrt/openwrt/tags | jq -r '.[].name' | grep v22 | head -n 1 | sed -e 's/v//')"
         if [[ ${{matrix.target}} == "x86_64" ]]; then
-            curl -fL -m 60 -o sdk.tar.xz https://downloads.openwrt.org/releases/18.06.9/targets/x86/64/openwrt-sdk-$REPO_BRANCH-x86-64_gcc-7.3.0_musl.Linux-x86_64.tar.xz
+            curl -fL -m 60 -o sdk.tar.xz https://downloads.openwrt.org/releases/18.06.9/targets/x86/64/openwrt-sdk-18.06.9-x86-64_gcc-7.3.0_musl.Linux-x86_64.tar.xz
         elif [[ ${{matrix.target}} == "nanopi-r4s" ]]; then
-            curl -fL -m 60 -o sdk.tar.xz https://downloads.openwrt.org/releases/18.06.9/targets/rockchip/armv8/openwrt-sdk-$REPO_BRANCH-rockchip-armv8_gcc-7.3.0_musl.Linux-x86_64.tar.xz
+            curl -fL -m 60 -o sdk.tar.xz https://downloads.openwrt.org/releases/18.06.9/targets/rockchip/armv8/openwrt-sdk-18.06.9-rockchip-armv8_gcc-7.3.0_musl.Linux-x86_64.tar.xz
         fi
 
     - name: Free up disk space
